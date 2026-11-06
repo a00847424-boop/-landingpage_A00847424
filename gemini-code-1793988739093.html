@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HAIL MARY SINALOA • 2026 | Proyecto Aeroespacial</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            black: '#0B0B0B',
+                            blue: '#0066FF',
+                            white: '#FFFFFF',
+                            gray: '#E6E6E6',
+                            darkGray: '#141414',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Arial', 'sans-serif'],
+                        title: ['Bahnschrift', 'Arial Black', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0B0B0B;
+            color: #FFFFFF;
+            overflow-x: hidden;
+        }
+
+        /* Canvas de fondo */
+        #space-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Estilos Neón y Glow */
+        .glow-blue {
+            filter: drop-shadow(0 0 15px rgba(0, 102, 255, 0.6));
+        }
+        .glow-text {
+            text-shadow: 0 0 12px rgba(0, 102, 255, 0.8);
+        }
+        
+        /* Animación continua del cohete */
+        @keyframes floatSpace {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(1deg); }
+        }
+        .rocket-float {
+            animation: floatSpace 4s ease-in-out infinite;
+        }
+
+        /* Destello del motor */
+        @keyframes thrusterPulse {
+            0%, 100% { opacity: 0.6; transform: scaleY(1); }
+            50% { opacity: 1; transform: scaleY(1.3); filter: drop-shadow(0 0 20px #0066FF); }
+        }
+        .thruster-glow {
+            animation: thrusterPulse 0.8s ease-in-out infinite alternate;
+            transform-origin: top center;
+        }
+
+        /* Escáner orbital */
+        @keyframes scanline {
+            0% { top: -100%; }
+            100% { top: 200%; }
+        }
+        .scanner-line {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #0066FF, transparent);
+            box-shadow: 0 0 15px #0066FF;
+            opacity: 0.5;
+            animation: scanline 6s linear infinite;
+        }
+
+        /* Tarjeta Neón Reactiva */
+        .interactive-card {
+            background: rgba(20, 20, 20, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .interactive-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: #0066FF;
+            box-shadow: 0 10px 30px rgba(0, 102, 255, 0.3);
+        }
+
+        /* Efecto de reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Barra de progreso animada */
+        .progress-bar-fill {
+            width: 0%;
+            transition: width 1.5s ease-out;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-brand-blue selection:text-white">
+
+    <!-- CANVAS DE ESTRELLAS + PARALLAX -->
+    <canvas id="space-canvas"></canvas>
+
+    <!-- HEADER / NAV -->
+    <header class="fixed top-0 left-0 w-full z-50 bg-brand-black/80 backdrop-blur-md border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="#inicio" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 relative flex items-center justify-center">
+                    <svg class="w-full h-full text-brand-blue transition-transform duration-500 group-hover:rotate-45" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4">
+                        <circle cx="50" cy="50" r="45" stroke-dasharray="8 4"/>
+                        <path d="M50 15 L50 85 M15 50 L85 50" stroke="#0066FF"/>
+                    </svg>
+                    <i data-lucide="rocket" class="w-5 h-5 absolute text-white"></i>
+                </div>
+                <div class="font-title tracking-wider">
+                    <span class="text-xl font-bold text-white">HAIL MARY</span>
+                    <span class="text-xs block text-brand-blue font-mono">SINALOA • 2026</span>
+                </div>
+            </a>
+
+            <nav class="hidden md:flex items-center gap-8 font-title uppercase tracking-widest text-sm">
+                <a href="#inicio" class="hover:text-brand-blue transition-colors relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-brand-blue hover:after:w-full after:transition-all">Inicio</a>
+                <a href="#reto" class="hover:text-brand-blue transition-colors relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-brand-blue hover:after:w-full after:transition-all">El Reto</a>
+                <a href="#equipo" class="hover:text-brand-blue transition-colors relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-brand-blue hover:after:w-full after:transition-all">Equipo</a>
+            </nav>
+
+            <a href="#reto" class="relative inline-flex items-center justify-center px-6 py-2.5 overflow-hidden font-title text-sm font-bold text-white bg-brand-blue rounded-full group">
+                <span class="absolute w-0 h-0 transition-all duration-500 ease-out bg-white rounded-full group-hover:w-56 group-hover:h-56 opacity-20"></span>
+                <span class="relative flex items-center gap-2">VER MISIÓN <i data-lucide="chevron-right" class="w-4 h-4"></i></span>
+            </a>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section id="inicio" class="relative min-h-screen pt-32 pb-20 flex items-center justify-center overflow-hidden">
+        <div class="max-w-5xl mx-auto px-6 text-center z-10 flex flex-col items-center">
+            
+            <!-- Badge de estado -->
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-blue/10 border border-brand-blue/30 text-brand-blue text-xs font-mono mb-8 animate-pulse">
+                <span class="w-2 h-2 rounded-full bg-brand-blue"></span>
+                ESTADO DE MISIÓN: EN DESARROLLO TÉCNICO
+            </div>
+
+            <!-- EMBLEMA CENTRAL CON PARALLAX Y ANIMACIÓN -->
+            <div class="relative w-64 h-64 md:w-80 md:h-80 mb-8 rocket-float" id="hero-logo-container">
+                <!-- Órbita resplandeciente -->
+                <div class="absolute inset-0 rounded-full border-2 border-brand-blue/30 animate-[spin_12s_linear_infinite] glow-blue"></div>
+                <div class="absolute inset-4 rounded-full border border-dashed border-white/20 animate-[spin_20s_linear_infinite_reverse]"></div>
+                
+                <!-- SVG Emblema Cohete -->
+                <svg viewBox="0 0 200 200" class="w-full h-full drop-shadow-[0_0_25px_rgba(0,102,255,0.7)]">
+                    <!-- Destello propulsor -->
+                    <path class="thruster-glow" d="M90,145 L100,185 L110,145 Z" fill="#0066FF" />
+                    <!-- Estrellas de fondo del emblema -->
+                    <polygon points="60,60 63,67 70,70 63,73 60,80 57,73 50,70 57,67" fill="#FFFFFF" opacity="0.8"/>
+                    <polygon points="145,110 147,115 152,117 147,119 145,124 143,119 138,117 143,115" fill="#FFFFFF" opacity="0.6"/>
+                    <!-- Cuerpo del Cohete -->
+                    <path d="M100,30 Q115,70 115,130 L85,130 Q85,70 100,30 Z" fill="#FFFFFF" stroke="#0B0B0B" stroke-width="3"/>
+                    <path d="M100,30 L100,130" stroke="#0066FF" stroke-width="2"/>
+                    <!-- Alerones -->
+                    <path d="M85,100 L68,135 L85,130 Z" fill="#0066FF"/>
+                    <path d="M115,100 L132,135 L115,130 Z" fill="#0066FF"/>
+                    <!-- Órbita frontal -->
+                    <path d="M40,115 C70,140 130,140 160,100" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M45,117 C72,142 128,142 155,103" fill="none" stroke="#0066FF" stroke-width="2"/>
+                </svg>
+            </div>
+
+            <!-- TÍTULO PRINCIPAL CON EFECTO DE DESCODIFICACIÓN -->
+            <h1 class="text-4xl md:text-7xl font-title font-extrabold tracking-tight mb-4 uppercase">
+                HAIL MARY <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-blue-400 to-white glow-text" id="scramble-title">SINALOA</span>
+            </h1>
+
+            <p class="text-lg md:text-xl text-brand-gray/80 max-w-2xl mb-10 leading-relaxed">
+                Proyecto de ingeniería aeroespacial enfocado en el diseño, simulación y lanzamiento experimental de cohetes mecánicos y de propulsión.
+            </p>
+
+            <!-- STATS COUNTER -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 w-full max-w-4xl py-6 border-y border-white/10 bg-brand-darkGray/40 backdrop-blur-md">
+                <div class="p-3">
+                    <div class="text-3xl font-title font-bold text-brand-blue counter" data-target="2026">0</div>
+                    <div class="text-xs text-brand-gray/60 font-mono">AÑO OBJETIVO</div>
+                </div>
+                <div class="p-3">
+                    <div class="text-3xl font-title font-bold text-white counter" data-target="3000">0</div>
+                    <div class="text-xs text-brand-gray/60 font-mono">ALTITUD META (M)</div>
+                </div>
+                <div class="p-3">
+                    <div class="text-3xl font-title font-bold text-brand-blue counter" data-target="4">0</div>
+                    <div class="text-xs text-brand-gray/60 font-mono">FASES DE PRUEBA</div>
+                </div>
+                <div class="p-3">
+                    <div class="text-3xl font-title font-bold text-white counter" data-target="100">0</div>
+                    <div class="text-xs text-brand-gray/60 font-mono">% SINALOENSE</div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECCIÓN: EL RETO -->
+    <section id="reto" class="relative py-28 px-6 bg-brand-darkGray/30 border-t border-white/5">
+        <div class="scanner-line"></div>
+        <div class="max-w-6xl mx-auto">
+            
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-xs font-mono text-brand-blue tracking-widest uppercase mb-2">// INGENIERÍA Y DESAFÍO</h2>
+                <h3 class="text-3xl md:text-5xl font-title font-bold">EL RETO AEROESPACIAL</h3>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                
+                <!-- FASE 1 -->
+                <div class="interactive-card p-8 rounded-2xl reveal">
+                    <div class="w-12 h-12 rounded-xl bg-brand-blue/10 border border-brand-blue/30 flex items-center justify-center text-brand-blue mb-6">
+                        <i data-lucide="cpu" class="w-6 h-6"></i>
+                    </div>
+                    <div class="text-xs font-mono text-brand-blue mb-1">FASE 01</div>
+                    <h4 class="text-xl font-title font-bold mb-3">Diseño CFD y Simulación</h4>
+                    <p class="text-brand-gray/70 text-sm mb-6 leading-relaxed">
+                        Modelado aerodinámico avanzado y cálculo de trayectoria utilizando software fluido-dinámico computacional.
+                    </p>
+                    <div class="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
+                        <div class="bg-brand-blue h-full progress-bar-fill" data-progress="85%"></div>
+                    </div>
+                    <div class="flex justify-between text-xs font-mono mt-2 text-brand-gray/50">
+                        <span>Estado</span>
+                        <span class="text-brand-blue">85% Completado</span>
+                    </div>
+                </div>
+
+                <!-- FASE 2 -->
+                <div class="interactive-card p-8 rounded-2xl reveal">
+                    <div class="w-12 h-12 rounded-xl bg-brand-blue/10 border border-brand-blue/30 flex items-center justify-center text-brand-blue mb-6">
+                        <i data-lucide="flame" class="w-6 h-6"></i>
+                    </div>
+                    <div class="text-xs font-mono text-brand-blue mb-1">FASE 02</div>
+                    <h4 class="text-xl font-title font-bold mb-3">Sistema de Propulsión</h4>
+                    <p class="text-brand-gray/70 text-sm mb-6 leading-relaxed">
+                        Pruebas estáticas de empuje, calibración de mezcla química y optimización estructural del motor cohete.
+                    </p>
+                    <div class="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
+                        <div class="bg-brand-blue h-full progress-bar-fill" data-progress="60%"></div>
+                    </div>
+                    <div class="flex justify-between text-xs font-mono mt-2 text-brand-gray/50">
+                        <span>Estado</span>
+                        <span class="text-brand-blue">60% Completado</span>
+                    </div>
+                </div>
+
+                <!-- FASE 3 -->
+                <div class="interactive-card p-8 rounded-2xl reveal">
+                    <div class="w-12 h-12 rounded-xl bg-brand-blue/10 border border-brand-blue/30 flex items-center justify-center text-brand-blue mb-6">
+                        <i data-lucide="radio" class="w-6 h-6"></i>
+                    </div>
+                    <div class="text-xs font-mono text-brand-blue mb-1">FASE 03</div>
+                    <h4 class="text-xl font-title font-bold mb-3">Aviónica y Telemetría</h4>
+                    <p class="text-brand-gray/70 text-sm mb-6 leading-relaxed">
+                        Desarrollo de ordenadores de a bordo, sensores de altitud, acelerómetros y recuperación por paracaídas.
+                    </p>
+                    <div class="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
+                        <div class="bg-brand-blue h-full progress-bar-fill" data-progress="40%"></div>
+                    </div>
+                    <div class="flex justify-between text-xs font-mono mt-2 text-brand-gray/50">
+                        <span>Estado</span>
+                        <span class="text-brand-blue">40% Completado</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN: EQUIPO -->
+    <section id="equipo" class="relative py-28 px-6">
+        <div class="max-w-6xl mx-auto">
+            
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-xs font-mono text-brand-blue tracking-widest uppercase mb-2">// TALENTO MULTIDISCIPLINARIO</h2>
+                <h3 class="text-3xl md:text-5xl font-title font-bold">NUESTRO EQUIPO</h3>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                
+                <div class="interactive-card p-6 rounded-2xl text-center reveal">
+                    <div class="w-24 h-24 mx-auto rounded-full bg-brand-blue/20 border-2 border-brand-blue flex items-center justify-center mb-4 glow-blue">
+                        <i data-lucide="shield-check" class="w-10 h-10 text-brand-blue"></i>
+                    </div>
+                    <h4 class="text-lg font-title font-bold">Liderazgo de Misión</h4>
+                    <p class="text-xs font-mono text-brand-blue mb-3">DIRECCIÓN GENERAL</p>
+                    <p class="text-brand-gray/60 text-sm">Coordinación estratégica, gestión de recursos y supervisión del cronograma de lanzamiento.</p>
+                </div>
+
+                <div class="interactive-card p-6 rounded-2xl text-center reveal">
+                    <div class="w-24 h-24 mx-auto rounded-full bg-white/5 border-2 border-white/20 flex items-center justify-center mb-4">
+                        <i data-lucide="wrench" class="w-10 h-10 text-white"></i>
+                    </div>
+                    <h4 class="text-lg font-title font-bold">Ingeniería Mecánica</h4>
+                    <p class="text-xs font-mono text-brand-blue mb-3">DISEÑO Y MATERIALES</p>
+                    <p class="text-brand-gray/60 text-sm">Fabricación de fuselaje, alerones aerodinámicos y maquinado de componentes de alta presión.</p>
+                </div>
+
+                <div class="interactive-card p-6 rounded-2xl text-center reveal">
+                    <div class="w-24 h-24 mx-auto rounded-full bg-white/5 border-2 border-white/20 flex items-center justify-center mb-4">
+                        <i data-lucide="binary" class="w-10 h-10 text-white"></i>
+                    </div>
+                    <h4 class="text-lg font-title font-bold">Sistemas & Software</h4>
+                    <p class="text-xs font-mono text-brand-blue mb-3">ELECTRÓNICA & TELEMETRÍA</p>
+                    <p class="text-brand-gray/60 text-sm">Programación de algoritmos de navegación, transmisión de datos de vuelo y análisis de señales.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="relative py-12 border-t border-white/10 bg-brand-black text-center">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="text-left">
+                <div class="font-title font-bold text-lg text-white">HAIL MARY SINALOA</div>
+                <div class="text-xs text-brand-gray/50 font-mono">PROYECTO FINAL AEROESPACIAL • 2026</div>
+            </div>
+            <div class="text-xs text-brand-gray/40">
+                &copy; 2026 HAIL MARY SINALOA. Todos los derechos reservados.
+            </div>
+        </div>
+    </footer>
+
+    <!-- LOGICA JAVASCRIPT ANIMADA -->
+    <script>
+        // Inicializar Iconos Lucide
+        lucide.createIcons();
+
+        // 1. STARFIELD CANVAS DE FONDO CON DINAMISMO PARALLAX
+        const canvas = document.getElementById('space-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        let mouseX = 0;
+        let mouseY = 0;
+        let targetX = 0;
+        let targetY = 0;
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            targetX = (e.clientX - width / 2) * 0.05;
+            targetY = (e.clientY - height / 2) * 0.05;
+        });
+
+        const stars = Array.from({ length: 150 }, () => ({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            radius: Math.random() * 1.5 + 0.5,
+            alpha: Math.random(),
+            speed: Math.random() * 0.02 + 0.005,
+            color: Math.random() > 0.3 ? '#FFFFFF' : '#0066FF'
+        }));
+
+        function drawStars() {
+            ctx.clearRect(0, 0, width, height);
+
+            mouseX += (targetX - mouseX) * 0.05;
+            mouseY += (targetY - mouseY) * 0.05;
+
+            stars.forEach(star => {
+                star.alpha += star.speed;
+                if (star.alpha > 1 || star.alpha < 0) star.speed = -star.speed;
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(star.x + mouseX, star.y + mouseY, star.radius, 0, Math.PI * 2);
+                ctx.fillStyle = star.color;
+                ctx.globalAlpha = Math.abs(star.alpha);
+                ctx.shadowBlur = star.radius * 4;
+                ctx.shadowColor = star.color;
+                ctx.fill();
+                ctx.restore();
+            });
+
+            requestAnimationFrame(drawStars);
+        }
+        drawStars();
+
+        // 2. SCROLL REVEAL Y BARRAS DE PROGRESO
+        const reveals = document.querySelectorAll('.reveal');
+
+        function checkScroll() {
+            const triggerBottom = window.innerHeight * 0.85;
+
+            reveals.forEach(el => {
+                const top = el.getBoundingClientRect().top;
+                if (top < triggerBottom) {
+                    el.classList.add('active');
+
+                    // Animar barras dentro de esta tarjeta
+                    const progress = el.querySelector('.progress-bar-fill');
+                    if (progress) {
+                        progress.style.width = progress.getAttribute('data-progress');
+                    }
+                }
+            });
+        }
+        window.addEventListener('scroll', checkScroll);
+        checkScroll();
+
+        // 3. CONTADORES NUMÉRICOS ANIMADOS
+        const counters = document.querySelectorAll('.counter');
+        let animated = false;
+
+        function startCounters() {
+            if (animated) return;
+            const heroSection = document.getElementById('inicio');
+            const rect = heroSection.getBoundingClientRect();
+
+            if (rect.top < window.innerHeight) {
+                counters.forEach(counter => {
+                    const target = +counter.getAttribute('data-target');
+                    let count = 0;
+                    const speed = target / 50;
+
+                    const updateCount = () => {
+                        count += speed;
+                        if (count < target) {
+                            counter.innerText = Math.ceil(count);
+                            setTimeout(updateCount, 25);
+                        } else {
+                            counter.innerText = target;
+                        }
+                    };
+                    updateCount();
+                });
+                animated = true;
+            }
+        }
+        window.addEventListener('scroll', startCounters);
+        startCounters();
+    </script>
+</body>
+</html>
